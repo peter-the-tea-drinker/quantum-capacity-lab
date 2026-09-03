@@ -22,7 +22,7 @@ class ConservedCapacityModel:
         circuit (QuantumCircuit): Active Qiskit circuit representation.
     """
 
-    def __init__(self, num_qubits: int = 2, c_max: float = 1.0):
+    def __init__(self, num_qubits: int = 2, c_max: float = 1.0, c_max_bound: float = 2.0):
         """
         Initialize the C_max capacity simulation engine.
         
@@ -33,7 +33,8 @@ class ConservedCapacityModel:
         self.num_qubits = num_qubits
         self.c_max = float(c_max)
         self.circuit = QuantumCircuit(self.num_qubits)
-
+        self.c_max_bound = c_max_bound
+    
     def reset_circuit(self):
         """Reset the internal quantum circuit."""
         self.circuit = QuantumCircuit(self.num_qubits)
@@ -173,7 +174,21 @@ class ConservedCapacityModel:
             pickle.dump(results, f)
 
         return results
+        
+    def calculate_von_neumann_entropy(self, density_matrix: np.ndarray) -> float:
+        """Computes S(rho) = -Tr(rho log2(rho)) for subsystem reduced density matrix."""
+        evals = np.linalg.eigvalsh(density_matrix)
+        evals = evals[evals > 1e-12]  # Drop zero eigenvalues
+        return -np.sum(evals * np.log2(evals))
 
+    def apply_suppression_factor(self, raw_fidelity: float, subsystem_entropy: float) -> float:
+        """
+        Applies non-linear C_max branch suppression factor:
+        F_final = F_raw * exp(-max(0, S - C_max))
+        """
+        delta_s = max(0.0, subsystem_entropy - self.c_max_bound)
+        suppression = np.exp(-delta_s)
+        return raw_fidelity * suppression
 
 if __name__ == "__main__":
     # Internal module test script

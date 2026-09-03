@@ -1,5 +1,4 @@
 from IPython.display import HTML, display
-
 def show_img(path, html_caption):
     html_str = f"""
     <figure style="text-align:center; margin:1.5rem auto; max-width:32rem; font-family:sans-serif;">

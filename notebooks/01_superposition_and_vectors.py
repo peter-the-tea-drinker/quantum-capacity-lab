@@ -253,4 +253,15 @@ ax.legend()
 plt.tight_layout()
 plt.show()
 
+# %% [markdown]
+# ## Exercise 2: Position-Momentum Complementarity in Continuous Systems
+#
+# Consider a particle of mass $m$ passing through a double slit with separation $d$. The spatial wavefunction on a screen at position $x$ is given by:
+#
+# $$\psi(x) = \frac{1}{\sqrt{2}} \Big( \psi_1(x) + e^{i \phi(x)} \psi_2(x) \Big)$$
+#
+# 1. **State Branching:** Suppose each slit contains a microscopic spin-1/2 particle that flips its state ($|\uparrow\rangle \rightarrow |\downarrow\rangle$) when the photon passes through Slit 2. Derive the spatial density matrix $\rho(x, x') = \text{Tr}_{\text{spin}}(|\Psi\rangle \langle \Psi|)$ after tracing out the spin degree of freedom.
+# 2. **Phase Erasure:** Show mathematically why the continuous interference term $\cos(\phi(x))$ vanishes in the diagonal probability density $\rho(x, x)$.
+# 3. **Coincidence Recovery:** If an observer measures the spin particle in the transverse basis $|+\rangle = \frac{1}{\sqrt{2}}(|\uparrow\rangle + |\downarrow\rangle)$, prove how filtering screen detections $x$ conditional on outcome $|+\rangle$ recovers the continuous fringe pattern.
+
 # %%

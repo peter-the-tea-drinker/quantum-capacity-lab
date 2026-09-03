@@ -7,6 +7,7 @@
 # 2. Decoherence via Which-Way Detector Entanglement (State Branching)
 # 3. Quantum Erasure: Coherent Uncomputation ($U^\dagger$)
 # 4. Quantum Erasure: Delayed Choice Basis Erasure & Coincidence Correlation
+# 5. Student Exercise 1: Polarization-Based Quantum Eraser & Fringe Visibility Sweep
 
 # %% slideshow={"slide_type": "skip"}
 import os
@@ -188,3 +189,66 @@ ax.grid(True, alpha=0.3)
 ax.legend()
 plt.tight_layout()
 plt.show()
+
+# %% [markdown] slideshow={"slide_type": "slide"}
+# ## Section 5: Exercise 1 — Polarization-Based Quantum Eraser
+#
+# **Task:** Instead of a full CNOT flip, replace the environmental entanglement with a parameterized controlled rotation $CRY(\phi)$ on Qubit 1.
+#
+# This mimics placing a Half-Wave Plate (HWP) at variable angle $\phi \in [0, \pi/2]$ in one path of a Mach-Zehnder Interferometer:
+#
+# - **$\phi = 0$:** No polarization rotation (No which-way information, $V = 1.0$)
+# - **$\phi = \pi/2$:** Full orthogonal polarization shift (Complete which-way marking, $V = 0.0$)
+#
+# We compute fringe visibility $V(\phi) = \frac{I_{\text{max}} - I_{\text{min}}}{I_{\text{max}} + I_{\text{min}}}$ as a function of continuous entanglement angle $\phi$.
+
+# %% slideshow={"slide_type": "subslide"}
+# Executable Student Code: Parameterized Polarization Entanglement Sweep
+phi_angles = np.linspace(0, np.pi / 2, 25)
+visibilities = []
+
+for phi in phi_angles:
+    p0_sweep = []
+    # Measure Ramsey curve for a specific polarization angle phi
+    for th in np.linspace(0, 2 * np.pi, 20):
+        qc_pol = QuantumCircuit(2, 1)
+        qc_pol.h(0)
+        qc_pol.rz(th, 0)
+        
+        # Parameterized environmental marking (HWP equivalent)
+        qc_pol.cry(phi, 0, 1)
+        
+        qc_pol.h(0)
+        qc_pol.measure(0, 0)
+        
+        res = simulator.run(qc_pol, shots=1000).result().get_counts()
+        p0_sweep.append(res.get('0', 0) / 1000)
+    
+    # Calculate Fringe Visibility V = (max - min) / (max + min)
+    i_max = np.max(p0_sweep)
+    i_min = np.min(p0_sweep)
+    v = (i_max - i_min) / (i_max + i_min) if (i_max + i_min) > 0 else 0.0
+    visibilities.append(v)
+
+# Plot Visibility Decay vs Polarization Angle
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(phi_angles, visibilities, 'o-', color='#00D2FF', linewidth=2, label=r'Simulated Visibility $V(\phi)$')
+ax.plot(phi_angles, np.cos(phi_angles / 2), '--', color='#FF007F', label=r'Theoretical Bound $\cos(\phi/2)$')
+ax.set_xlabel('Polarization Rotation Angle $\\phi$ (rad)')
+ax.set_ylabel('Fringe Visibility $V$')
+ax.set_title('Exercise 1: Ramsey Fringe Visibility vs Which-Way Marking Angle')
+ax.grid(True, alpha=0.3)
+ax.legend()
+plt.tight_layout()
+plt.show()
+
+# %% [markdown]
+# ## Exercise 4: Uncomputation Limits under Environmental Noise
+#
+# In Section 3, we assumed the inverse operator $U^\dagger$ can perfectly undo environmental entanglement. However, physical environments undergo amplitude damping (photon decay).
+#
+# 1. **Noisy Channel:** If the environmental qubit has a probability $\gamma \in [0, 1]$ of decaying to $|0\rangle$ before $U^\dagger$ is applied, derive the reduced density matrix $\rho_S$ of the system.
+# 2. **Recoverable Visibility:** Calculate the maximum recoverable fringe visibility $V(\gamma)$ as a function of the decay parameter $\gamma$.
+# 3. **Conceptual Check:** Distinguish between **decoherence** (reversible phase dispersion into subsystem correlations) and **dissipation** (irreversible loss of information to an unmeasured reservoir).
+
+# %%

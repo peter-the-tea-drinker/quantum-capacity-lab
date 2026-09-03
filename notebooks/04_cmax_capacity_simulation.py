@@ -144,3 +144,7 @@ print(f"   Controllable via Local Phase: {phase_res['controllable_via_local_phas
 print("\n2. Uncomputation Test: Reversible = {uncomp_res['reversible']}")
 print(f"   Recovered Entropy: {uncomp_res['s_recovered']:.6f} bits")
 print(f"   Full Reversibility Restored: {uncomp_res['is_fully_recovered']}")
+
+# %%
+
+# %%

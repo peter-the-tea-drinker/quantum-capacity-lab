@@ -16,9 +16,50 @@ import matplotlib.pyplot as plt
 from qiskit import QuantumCircuit
 from qiskit_aer import AerSimulator
 from qiskit.quantum_info import Statevector, DensityMatrix, partial_trace, entropy
+from utils import show_img
 
 plt.style.use('dark_background')
 os.makedirs('data', exist_ok=True)
+
+# %% [markdown]
+# ## Section 1: Spontaneous Parametric Downconversion
+#
+# Nonlinear crystals (such as bbo) can create pairs of photons that share a wave function - they are entangled.
+#
+# A UV laser will sometimes interact with the crystal, become absorbed, and two entangled low energy photons emerge (conserving momentum).
+#
+# Assuming one of these entangled photons takes "Path A" (towards one of your detectors) then the second one must take "Path B", but this is not known until one of them is detected.
+#
+# The photons can also have polarisation, which gives us 2 qubits:
+#
+# **Qubit 1: Path Space**
+# * Path A: $\vert A \rangle = \begin{pmatrix} 1 \\ 0 \end{pmatrix}$
+# * Path B: $\vert B \rangle = \begin{pmatrix} 0 \\ 1 \end{pmatrix}$
+#
+# **Qubit 2: Polarization Space**
+# * Horizontal: $\vert H \rangle = \begin{pmatrix} 1 \\ 0 \end{pmatrix}$
+# * Vertical: $\vert V \rangle = \begin{pmatrix} 0 \\ 1 \end{pmatrix}$
+#
+#
+# A 2-qubit system exists in a 4-dimensional Hilbert space $\mathcal{H}_{total} = \mathcal{H}_{path} \otimes \mathcal{H}_{polarisation}$.
+#
+# The basis vectors are constructed via the Kronecker product:
+#
+# $$|00\rangle = |0\rangle \otimes |0\rangle = \begin{pmatrix} 1 \\ 0 \\ 0 \\ 0 \end{pmatrix}, \quad |01\rangle = \begin{pmatrix} 0 \\ 1 \\ 0 \\ 0 \end{pmatrix}, \quad |10\rangle = \begin{pmatrix} 0 \\ 0 \\ 1 \\ 0 \end{pmatrix}, \quad |11\rangle = \begin{pmatrix} 0 \\ 0 \\ 0 \\ 1 \end{pmatrix}$$
+#
+#
+# We could choose to ensure that path A is Horizontal and path B is Vertical:
+#
+#
+# $$\vert A, H \rangle = \begin{pmatrix} 1 \\ 0 \end{pmatrix} \otimes \begin{pmatrix} 1 \\ 0 \end{pmatrix} = \begin{pmatrix} 1 \cdot 1 \\ 1 \cdot 0 \\ 0 \cdot 1 \\ 0 \cdot 0 \end{pmatrix} = \begin{pmatrix} 1 \\ 0 \\ 0 \\ 0 \end{pmatrix}$$
+#
+# $$\vert B, V \rangle = \begin{pmatrix} 0 \\ 1 \end{pmatrix} \otimes \begin{pmatrix} 0 \\ 1 \end{pmatrix} = \begin{pmatrix} 0 \cdot 0 \\ 0 \cdot 1 \\ 1 \cdot 0 \\ 1 \cdot 1 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \\ 0 \\ 1 \end{pmatrix}$$
+#
+#
+#
+
+# %%
+show_img('images/Spontaneous_Parametric_Downconversion.png','By <a href="https://en.wikipedia.org/wiki/User:J_S_Lundeen" class="extiw" title="wikipedia:User:J S Lundeen">J S Lundeen</a> at <a href="https://en.wikipedia.org/wiki/" class="extiw" title="wikipedia:">English Wikipedia</a> - <span class="int-own-work" lang="">Own work by the original uploader</span>, <a href="http://creativecommons.org/licenses/by-sa/3.0/" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=36352608">Link</a>')
 
 # %% [markdown] slideshow={"slide_type": "slide"}
 # ## Section 1: Multi-Qubit Hilbert Spaces & Tensor Products
@@ -40,14 +81,46 @@ ket_11 = np.kron(ket_1, ket_1)
 print("Composite state |00⟩ vector:")
 print(ket_00)
 
-# %% [markdown] slideshow={"slide_type": "slide"}
+# %% [markdown]
 # ## Section 2: Bell State Entanglement ($|\Phi^+\rangle$)
+#
+#
+#
+# #### **Step A: The "Which-Way" Marked State (Bell State)**
+# The waveplate marks Path A as Vertical ($\vert V \rangle$) and leaves Path B as Horizontal ($\vert H \rangle$):
+# $$\vert\psi\rangle = \frac{1}{\sqrt{2}} \big( \vert A\rangle\vert V\rangle + \vert B\rangle\vert H\rangle \big) = \frac{1}{\sqrt{2}} \left[ \begin{pmatrix} 0 \\ 1 \\ 0 \\ 0 \end{pmatrix} + \begin{pmatrix} 0 \\ 0 \\ 1 \\ 0 \end{pmatrix} \right] = \frac{1}{\sqrt{2}} \begin{pmatrix} 0 \\ 1 \\ 1 \\ 0 \end{pmatrix}$$
+#
+# #### **Step B: The Eraser Operator (Diagonal Polarizer)**
+
+# %%
+show_img('images/erasure1.png','By <a href="//commons.wikimedia.org/wiki/User:Patrick_Edwin_Moran" title="User:Patrick Edwin Moran">Patrick Edwin Moran</a> - <span class="int-own-work" lang="en">Own work</span>, <a href="https://creativecommons.org/licenses/by-sa/3.0" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=31186313">Link</a>')
+
+# %%
+show_img('images/erasure2.png','By <a href="//commons.wikimedia.org/wiki/User:Patrick_Edwin_Moran" title="User:Patrick Edwin Moran">Patrick Edwin Moran</a> - <span class="int-own-work" lang="en">Own work</span>, <a href="https://creativecommons.org/licenses/by-sa/3.0" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=31186314">Link</a>')
+
+# %% [markdown] slideshow={"slide_type": "slide"}
+#
+# The diagonal eraser state is $\vert D \rangle = \frac{1}{\sqrt{2}}(\vert H \rangle + \vert V \rangle) = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 \\ 1 \end{pmatrix}$. 
+#
+# To project the polarization qubit while leaving the path qubit untouched, we construct the measurement matrix $M = I \otimes \langle D \vert$:
+# $$M = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} \otimes \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 1 \end{pmatrix} = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 \cdot \begin{pmatrix} 1 & 1 \end{pmatrix} & 0 \cdot \begin{pmatrix} 1 & 1 \end{pmatrix} \\ 0 \cdot \begin{pmatrix} 1 & 1 \end{pmatrix} & 1 \cdot \begin{pmatrix} 1 & 1 \end{pmatrix} \end{pmatrix} = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 1 & 0 & 0 \\ 0 & 0 & 1 & 1 \end{pmatrix}$$
+#
+# #### **Step C: The Resulting State Post-Erasure**
+# We apply the projection matrix $M$ to our marked state $\vert\psi\rangle$:
+# $$\vert\psi_{\text{final}}\rangle = M \vert\psi\rangle$$
+#
+# $$\vert\psi_{\text{final}}\rangle = \left[ \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 1 & 0 & 0 \\ 0 & 0 & 1 & 1 \end{pmatrix} \right] \cdot \left[ \frac{1}{\sqrt{2}} \begin{pmatrix} 0 \\ 1 \\ 1 \\ 0 \end{pmatrix} \right]$$
+#
+# $$\vert\psi_{\text{final}}\rangle = \frac{1}{2} \begin{pmatrix} (1\cdot0) + (1\cdot1) + (0\cdot1) + (0\cdot0) \\ (0\cdot0) + (0\cdot1) + (1\cdot1) + (1\cdot0) \end{pmatrix} = \frac{1}{2} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = \frac{1}{2} (\vert A \rangle + \vert B \rangle)$$
+#
 #
 # An entangled state cannot be factored into product states ($|\psi_{AB}\rangle \neq |\psi_A\rangle \otimes |\psi_B\rangle$).
 #
 # Applying a Hadamard gate followed by a CNOT gate yields the maximally entangled Bell state:
 #
 # $$|\Phi^+\rangle = \frac{1}{\sqrt{2}}(|00\rangle + |11\rangle)$$
+
+# %%
 
 # %% slideshow={"slide_type": "fragment"}
 # Build Bell State Circuit in Qiskit
@@ -130,5 +203,19 @@ ax.grid(True, alpha=0.3)
 ax.legend()
 plt.tight_layout()
 plt.show()
+
+# %% [markdown]
+# ## Exercise 3: Entanglement with a Continuous Field Mode
+#
+# Instead of a single discrete detector qubit, let the system qubit entangle with a continuous electromagnetic mode inside a resonant cavity (prepared in a coherent state $|\alpha\rangle$).
+#
+# The joint system-environment state after interaction is:
+#
+# $$|\Psi\rangle = \frac{1}{\sqrt{2}} \left( |0\rangle_S |\alpha\rangle_E + |1\rangle_S |-\alpha\rangle_E \right)$$
+#
+# 1. **Environmental Overlap:** Calculate the inner product $\langle -\alpha | \alpha \rangle$ between the two continuous coherent states.
+# 2. **Visibility Bound:** Given that Ramsey fringe visibility is $V = |\langle -\alpha | \alpha \rangle|$, prove that:
+#    $$V = e^{-2|\alpha|^2}$$
+# 3. **Capacity Threshold:** How many average photons $\bar{n} = |\alpha|^2$ are required to suppress system coherence below $1\%$? What does this scaling limit imply about macro-system state capacity ($\mathcal{C}_{\text{max}}$)?
 
 # %%
