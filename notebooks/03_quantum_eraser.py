@@ -251,4 +251,7 @@ plt.show()
 # 2. **Recoverable Visibility:** Calculate the maximum recoverable fringe visibility $V(\gamma)$ as a function of the decay parameter $\gamma$.
 # 3. **Conceptual Check:** Distinguish between **decoherence** (reversible phase dispersion into subsystem correlations) and **dissipation** (irreversible loss of information to an unmeasured reservoir).
 
+# %% [markdown]
+#
+
 # %%

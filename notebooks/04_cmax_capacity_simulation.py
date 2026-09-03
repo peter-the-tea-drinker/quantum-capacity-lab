@@ -145,6 +145,66 @@ print("\n2. Uncomputation Test: Reversible = {uncomp_res['reversible']}")
 print(f"   Recovered Entropy: {uncomp_res['s_recovered']:.6f} bits")
 print(f"   Full Reversibility Restored: {uncomp_res['is_fully_recovered']}")
 
-# %%
+# %% [markdown]
+# ## 3.5 Practical Test Protocol: Macroscopic Josephson Junction Phase Tunneling
+#
+# Macroscopic Quantum Tunneling (MQT) in Josephson junctions provides a highly controllable platform to benchmark continuous state capacity ($\mathcal{C}_{\text{max}}$) against standard thermal relaxation ($T_1$) and phase decoherence ($T_2$).
+#
+# ---
+#
+# ### 1. Physical System & Tunneling Mechanics
+# A current-biased Josephson junction behaves as a particle of "mass" $C$ moving in a tilt-washboard potential:
+#
+# $$U(\phi) = -E_J \cos\phi - E_J \left(\frac{I}{I_c}\right)\phi$$
+#
+# * **Phase Superposition:** Near the critical current $I \approx I_c$, the phase variable $\phi$ can tunnel out of a local potential well into a running state.
+# * **Entropy Generation:** As the state splits between trapped $\vert{}\phi_{\text{trapped}}\rangle$ and tunneled $\vert{}\phi_{\text{running}}\rangle$, spatial entanglement with the bias line creates a subsystem entropy $S(\rho_{\phi})$.
+# * **$\mathcal{C}_{\text{max}}$ Onset:** If the tunneling probability $\mathcal{T}_{\text{MQT}}$ produces an entropy $S(\rho_{\phi}) > \mathcal{C}_{\text{max}}$, the state capacity threshold is breached, accelerating decay beyond standard environmental thermalization $\Gamma_{\text{thermal}}$.
+#
+# ---
+#
+# ### 2. Practical Student Exercise: Modeling Josephson MQT under $\mathcal{C}_{\text{max}}$
+#
+# #### Problem Statement
+# 1. Compute the WKB escape rate $\Gamma_{\text{MQT}}$ for a junction with Josephson energy $E_J$ and charging energy $E_C$.
+# 2. Calculate the resulting spatial phase entropy $S(\rho) = - \mathcal{T} \log_2 \mathcal{T} - (1 - \mathcal{T}) \log_2 (1 - \mathcal{T})$.
+# 3. Predict the effective escape fidelity under non-linear state capacity suppression in `src/collapse_model.py`.
+#
+# #### Python Implementation Code
+# ```python
+# import numpy as np
+#
+# def evaluate_josephson_mqt_cmax(i_bias_ratio=0.98, ej_ec_ratio=50.0, c_max_bound=0.5):
+#     """
+#     Evaluates Macroscopic Quantum Tunneling (MQT) phase escape rate 
+#     and applies C_max non-linear branch suppression.
+#     """
+#     # 1. WKB tunneling transmission probability approximation
+#     barrier_factor = (1.0 - i_bias_ratio)**(1.25)
+#     t_mqt = np.exp(-12.0 * np.sqrt(ej_ec_ratio) * barrier_factor)
+#     
+#     # 2. Subsystem entropy of trapped vs tunneled phase branches
+#     if t_mqt <= 0.0 or t_mqt >= 1.0:
+#         entropy = 0.0
+#     else:
+#         entropy = -(t_mqt * np.log2(t_mqt) + (1.0 - t_mqt) * np.log2(1.0 - t_mqt))
+#         
+#     # 3. Apply C_max state capacity suppression
+#     delta_s = max(0.0, entropy - c_max_bound)
+#     f_suppression = np.exp(-delta_s)
+#     effective_t = t_mqt * f_suppression
+#     
+#     return {
+#         "raw_t_mqt": t_mqt,
+#         "phase_entropy": entropy,
+#         "c_max_suppression": f_suppression,
+#         "effective_tunneling_rate": effective_t
+#     }
+#
+# # Execute simulation for a standard Transmon/Josephson junction
+# results = evaluate_josephson_mqt_cmax(i_bias_ratio=0.98, ej_ec_ratio=50.0, c_max_bound=0.3)
+# print(f"Raw Tunneling Prob (T): {results['raw_t_mqt']:.6f}")
+# print(f"Phase Subsystem Entropy: {results['phase_entropy']:.6f} bits")
+# print(f"C_max Suppressed Rate:   {results['effective_tunneling_rate']:.6f}")
 
 # %%
