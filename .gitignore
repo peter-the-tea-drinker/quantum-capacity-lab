@@ -3,3 +3,6 @@ quantum_env/
 __pycache__/
 *.pyc
 .DS_Store
+*.ipynb
+.ipynb_checkpoints/
+data/*.pkl
