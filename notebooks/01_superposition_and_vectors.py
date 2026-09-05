@@ -190,12 +190,141 @@ print(f"Norm <+|---------------+ = {norm.real:.3f} (Probability conserved)")
 #
 # This self-inverting property is heavily exploited in algorithms
 
+# %% [markdown]
+# ### The CNOT gate
+#
+# A CNOT (controlled not) gate will flip the second qubit, but only if the the first qubit is 1.
+#
+# $$
+# \text{CNOT} = \begin{pmatrix} 
+# 1 & 0 & 0 & 0 \\ 
+# 0 & 1 & 0 & 0 \\ 
+# 0 & 0 & 0 & 1 \\ 
+# 0 & 0 & 1 & 0 
+# \end{pmatrix}
+# $$
+#
+# ### CNOT Bit-Flip Example
+#
+# When the control qubit is set to $|1\rangle$, the CNOT gate acts as a NOT gate (bit-flip) on the target qubit. 
+#
+# ---
+#
+# ### 1. Initial Conditions
+# We initialize the system to the state where the **Control is $|1\rangle$** and the **Target is $|0\rangle$**.
+#
+# * **Bra-Ket Form:**  
+#   $$|\psi_{\text{in}}\rangle = |1\rangle_C \otimes |0\rangle_T = |10\rangle$$
+#
+# * **Vector Form:**  
+#   Under the standard computational basis ordered as $\{|00\rangle, |01\rangle, |10\rangle, |11\rangle\}$, the initial state vector is:
+#   $$|\psi_{\text{in}}\rangle = \begin{pmatrix} 0 \\ 0 \\ 1 \\ 0 \end{pmatrix}$$
+#
+# ---
+#
+# ### 2. Matrix Multiplication Form
+# Applying the ideal CNOT matrix operator to the input state vector yields:
+#
+# $$
+# |\psi_{\text{out}}\rangle = \text{CNOT} \, |\psi_{\text{in}}\rangle = 
+# \begin{pmatrix} 
+# 1 & 0 & 0 & 0 \\ 
+# 0 & 1 & 0 & 0 \\ 
+# 0 & 0 & 0 & 1 \\ 
+# 0 & 0 & 1 & 0 
+# \end{pmatrix} 
+# \begin{pmatrix} 0 \\ 0 \\ 1 \\ 0 \end{pmatrix} = 
+# \begin{pmatrix} 0 \\ 0 \\ 0 \\ 1 \end{pmatrix}
+# $$
+#
+# ---
+#
+#
+# $$
+# \begin{aligned}
+# \text{CNOT}|10\rangle &= |11\rangle
+# \end{aligned}
+# $$
+#
+#
+#
+
+# %% [markdown]
+# ### Generating a Bell State Using Kronecker Products
+#
+# To create the entangled Bell State $|\Phi^+\rangle = \frac{1}{\sqrt{2}}(|00\rangle + |11\rangle)$, we track two qubits initialized to $|0\rangle_C |0\rangle_T$.
+#
+# ---
+#
+# ### Step 1: Initialize the System Vector
+# The input state is $|00\rangle$. Mathematically, this is the Kronecker product ($\otimes$) of two single-qubit vectors:
+#
+# $$
+# |0\rangle = \begin{pmatrix} 1 \\ 0 \end{pmatrix}
+# $$
+#
+# $$
+# |\psi_0\rangle = |0\rangle \otimes |0\rangle = \begin{pmatrix} 1 \\ 0 \end{pmatrix} \otimes \begin{pmatrix} 1 \\ 0 \end{pmatrix} = \begin{pmatrix} 1 \cdot 1 \\ 1 \cdot 0 \\ 0 \cdot 1 \\ 0 \cdot 0 \end{pmatrix} = \begin{pmatrix} 1 \\ 0 \\ 0 \\ 0 \end{pmatrix}
+# $$
+#
+# ---
+#
+# ### Step 2: Apply the Hadamard Gate to QuBit 1
+# We apply a Hadamard gate ($H$) to the Control qubit while leaving the Target qubit unchanged using the Identity matrix ($I$). 
+#
+# #### 2a. Building the $4 \times 4$ Operator Matrix
+# We expand the local operations into the full 2-qubit space using the Kronecker product ($H \otimes I$):
+#
+# $$
+# H = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}, \quad I = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}
+# $$
+#
+# $$
+# H \otimes I = \frac{1}{\sqrt{2}} \begin{pmatrix} 1\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} & 1\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} \\ 1\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} & -1\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} \end{pmatrix} = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 0 & 1 & 0 \\ 0 & 1 & 0 & 1 \\ 1 & 0 & -1 & 0 \\ 0 & 1 & 0 & -1 \end{pmatrix}
+# $$
+#
+# #### 2b. Computing the Superposition State Vector
+# Multiplying this expanded matrix by our initial state vector puts the control qubit into a superposition:
+#
+# $$
+# |\psi_1\rangle = (H \otimes I)|\psi_0\rangle = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 0 & 1 & 0 \\ 0 & 1 & 0 & 1 \\ 1 & 0 & -1 & 0 \\ 0 & 1 & 0 & -1 \end{pmatrix} \begin{pmatrix} 1 \\ 0 \\ 0 \\ 0 \end{pmatrix} = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 \\ 0 \\ 1 \\ 0 \end{pmatrix}
+# $$
+# *(This vector represents the unentangled state $\frac{1}{\sqrt{2}}(|00\rangle + |10\rangle)$).*
+#
+# ---
+#
+# ### Step 3: Apply the CNOT Gate to Entangle the Qubits
+# Finally, we apply the standard $4 \times 4$ CNOT matrix directly to our state vector $|\psi_1\rangle$:
+#
+# $$
+# |\psi_{\text{out}}\rangle = \text{CNOT} |\psi_1\rangle = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0 \end{pmatrix} \cdot \frac{1}{\sqrt{2}}\begin{pmatrix} 1 \\ 0 \\ 1 \\ 0 \end{pmatrix}
+# $$
+#
+# Evaluating the row multiplications:
+# * Row 1: $1 \cdot 1 = 1$
+# * Row 2: $1 \cdot 0 = 0$
+# * Row 3: $1 \cdot 0 = 0$ (the 1 in the vector gets multiplied by the 0 in row 3)
+# * Row 4: $1 \cdot 1 = 1$ (the 1 in the vector gets multiplied by the 1 in row 4)
+#
+# $$
+# |\psi_{\text{out}}\rangle = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 \\ 0 \\ 0 \\ 1 \end{pmatrix}
+# $$
+#
+# ### Final Result
+# The resulting vector has amplitudes only at the first index ($|00\rangle$) and the last index ($|11\rangle$):
+#
+# $$
+# |\psi_{\text{out}}\rangle = \frac{1}{\sqrt{2}}(|00\rangle + |11\rangle) = |\Phi^+\rangle
+# $$
+#
+
 # %% [markdown] slideshow={"slide_type": "slide"}
 # ## Section 3: Superposition & Single-Qubit Unitary Operators
 #
 # Qiskit includes the **Hadamard Gate ($H$)**:
 #
 # $$H = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}$$
+#
 
 # %% slideshow={"slide_type": "fragment"}
 # Execute single-qubit Hadamard superposition in Qiskit
@@ -209,11 +338,101 @@ counts = simulator.run(qc, shots=1000).result().get_counts()
 plot_histogram(counts, title="Single Qubit Measurement in Superposition (|---------------+)", color='#00D2FF')
 
 # %% [markdown] slideshow={"slide_type": "slide"}
-# ## Section 4: Ramsey Fringe Interference Sweep
+# ## Section 4: Interference Sweep
+#
+# It closely resembles the Mach-Zehnder interferometer -https://chem.libretexts.org/Bookshelves/Physical_and_Theoretical_Chemistry_Textbook_Maps/Quantum_Tutorials_(Rioux)/07%3A_Quantum_Optics/7.23%3A_The_Ramsey_Atomic_Interferometer
 #
 # The classical MZI transfer sequence ($T_{BS} \cdot P(\theta) \cdot T_{BS}$) is mapped directly to a quantum **Ramsey Interferometry Sequence**:
 #
 # $$\text{Sequence}: H \rightarrow R_z(\theta) \rightarrow H \rightarrow \text{Measure}$$
+#
+# ### Mapping Classical MZI to Quantum Ramsey Interferometry
+#
+# The mathematical transformation sequence for a classical Mach-Zehnder Interferometer (MZI) maps directly onto a quantum Ramsey sequence. 
+#
+# | Physical Feature | Classical MZI | Quantum Ramsey Sequence |
+# | :--- | :--- | :--- |
+# | **System Basis** | Two Spatial Paths ($|path_1\rangle, |path_2\rangle$) | Two Energy Levels ($|0\rangle, |1\rangle$) |
+# | **Mixing Element** | 50:50 Beam Splitter ($T_{BS}$) | $\pi/2$ Radio-Frequency Pulse ($R_{\pi/2}$) |
+# | **Phase Shift** | Optical Delay Line / Phase Shifter ($P(\theta)$) | Free Precession / Detuning ($U_{\Delta t}$) |
+#
+# ---
+#
+# ### 1. Matrix Component Equivalence
+#
+# #### A. The Beam Splitter vs. $\pi/2$ Pulse
+# A classical symmetric 50:50 beam splitter splits power evenly and introduces a $90^\circ$ ($i$) phase shift on reflection. In quantum mechanics, a $\pi/2$ pulse creates an equal superposition of states. 
+#
+# Up to a global phase factor, both operations are represented by the identical unitary matrix (often written using the Hadamard operator $H$ or a $Y$-rotation):
+#
+# $$
+# T_{BS} = R_{\pi/2} = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & i \\ i & 1 \end{pmatrix}
+# $$
+#
+# #### B. The Path Phase Shift vs. Free Precession
+# In an MZI, a piece of glass in one arm retards the phase of that path by $\theta$. In a Ramsey sequence, letting the qubit sit idle for a duration $\Delta t$ causes its state to acquire a phase difference $\theta = \Delta \omega \cdot \Delta t$ relative to the driving laser clock (where $\Delta \omega$ is the detuning frequency).
+#
+# $$
+# P(\theta) = U_{\Delta t} = \begin{pmatrix} 1 & 0 \\ 0 & e^{i\theta} \end{pmatrix}
+# $$
+#
+# ---
+#
+# ### 2. The Transfer Sequence Multiplication
+#
+# The complete transfer sequence is computed by multiplying the operators from right to left: 
+# $$\text{Total Transformation} = T_{BS} \cdot P(\theta) \cdot T_{BS}$$
+#
+# #### Step 2a: First Split and Phase Shift
+# Multiplying the phase shift matrix by the first beam splitter matrix yields:
+#
+# $$
+# P(\theta) \cdot T_{BS} = \begin{pmatrix} 1 & 0 \\ 0 & e^{i\theta} \end{pmatrix} \cdot \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & i \\ i & 1 \end{pmatrix} = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & i \\ i e^{i\theta} & e^{i\theta} \end{pmatrix}
+# $$
+#
+# #### Step 2b: Final Recombination Matrix
+# Multiplying the second beam splitter matrix by the result of Step 2a yields the total transfer matrix:
+#
+# $$
+# M_{\text{total}} = \frac{1}{2}\begin{pmatrix} 1 & i \\ i & 1 \end{pmatrix} \begin{pmatrix} 1 & i \\ i e^{i\theta} & e^{i\theta} \end{pmatrix}
+# $$
+#
+# Evaluating the matrix elements:
+# * **Top Left:** $1(1) + i(ie^{i\theta}) = 1 - e^{i\theta}$
+# * **Top Right:** $1(i) + i(e^{i\theta}) = i(1 + e^{i\theta})$
+# * **Bottom Left:** $i(1) + 1(ie^{i\theta}) = i(1 + e^{i\theta})$
+# * **Bottom Right:** $i(i) + 1(e^{i\theta}) = -1 + e^{i\theta}$
+#
+# $$
+# M_{\text{total}} = \frac{1}{2} \begin{pmatrix} 1 - e^{i\theta} & i(1 + e^{i\theta}) \\ i(1 + e^{i\theta}) & e^{i\theta} - 1 \end{pmatrix}
+# $$
+#
+# ---
+#
+# ### 3. Physical Interference Output
+#
+# If we initialize the system in the baseline state ($|path_1\rangle$ for MZI, or ground state $|0\rangle = \begin{pmatrix}1 \\ 0\end{pmatrix}$ for Ramsey):
+#
+# $$
+# |\psi_{\text{out}}\rangle = M_{\text{total}} \begin{pmatrix} 1 \\ 0 \end{pmatrix} = \frac{1}{2} \begin{pmatrix} 1 - e^{i\theta} \\ i(1 + e^{i\theta}) \end{pmatrix}
+# $$
+#
+# #### Finding the Transition Probability
+# The probability of detecting the particle in the second output channel ($|path_2\rangle$ or excited state $|1\rangle$) is found by taking the absolute square of the bottom element:
+#
+# $$
+# P_{\text{transition}} = \left| \frac{i}{2}(1 + e^{i\theta}) \right|^2 = \frac{1}{4}(1 + e^{i\theta})(1 + e^{-i\theta}) = \frac{1}{4}(2 + e^{i\theta} + e^{-i\theta})
+# $$
+#
+# Using Euler's identity $\cos\theta = \frac{e^{i\theta} + e^{-i\theta}}{2}$:
+#
+# $$
+# P_{\text{transition}} = \frac{1}{2}(1 + \cos\theta) = \cos^2\left(\frac{\theta}{2}\right)
+# $$
+#
+# #### Conclusion
+# Whether measuring **classical optical fringe intensity** in an MZI or tracking **quantum population oscillations (Ramsey fringes)** in an atomic clock, the exact same trigonometric $\cos^2(\theta/2)$ mathematical relationship governs the system.
+#
 
 # %% slideshow={"slide_type": "subslide"}
 cache_file = 'data/ramsey_cache.pkl'
@@ -263,5 +482,104 @@ plt.show()
 # 1. **State Branching:** Suppose each slit contains a microscopic spin-1/2 particle that flips its state ($|\uparrow\rangle \rightarrow |\downarrow\rangle$) when the photon passes through Slit 2. Derive the spatial density matrix $\rho(x, x') = \text{Tr}_{\text{spin}}(|\Psi\rangle \langle \Psi|)$ after tracing out the spin degree of freedom.
 # 2. **Phase Erasure:** Show mathematically why the continuous interference term $\cos(\phi(x))$ vanishes in the diagonal probability density $\rho(x, x)$.
 # 3. **Coincidence Recovery:** If an observer measures the spin particle in the transverse basis $|+\rangle = \frac{1}{\sqrt{2}}(|\uparrow\rangle + |\downarrow\rangle)$, prove how filtering screen detections $x$ conditional on outcome $|+\rangle$ recovers the continuous fringe pattern.
+
+# %% [markdown]
+# ## Optional CNOT using optics
+
+# %%
+show_img('images/KLM_CNOT.png',"Demonstration of an optical quantum controlled-NOT gate without path interference Okamoto, Hofmann, Takeuchi, Sasaki")
+
+# %% [markdown]
+# A partially polarising beam splitter (PPBS in the diagram above, not to be comfused with a polarisation preserving beam splitter) by  Okamoto et al. 2005:
+#
+#
+# The gate operates in the coincidence basis where:
+# * Horizontal polarisation: $|H\rangle = |0\rangle$
+# * Vertical polarisation: $|V\rangle = |1\rangle$
+#
+#
+# ### A. Intrinsic Central Element ($PPBS_A$)
+# The central mixing beam splitter handles polarization components according to:
+# * **Vertical ($V$)**: Reflects perfectly ($R_V = 1 \implies r_V = 1$).
+# * **Horizontal ($H$)**: Reflects $1/3$ and transmits $2/3$ ($R_H = 1/3, T_H = 2/3$).
+#
+# Following the standard phase conventions, its path transformation matrices are:
+# $$
+# M_{A, H} = \begin{pmatrix} \sqrt{\frac{2}{3}} & \sqrt{\frac{1}{3}} \\ \sqrt{\frac{1}{3}} & -\sqrt{\frac{2}{3}} \end{pmatrix}, \quad M_{A, V} = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}
+# $$
+#
+# ### B. Supplemental Attenuating Elements ($PPBS_B$)
+# The two $PPBS_B$ elements act exclusively to balance amplitudes. Unlike $PPBS_A$, they **transmit $H$ perfectly ($T_H = 1$)** and **transmit only $1/3$ of $V$ ($T_V = 1/3$)**. Their inline single-path transmission operator is:
+# $$
+# T_B = \begin{pmatrix} 1 & 0 \\ 0 & \sqrt{\frac{1}{3}} \end{pmatrix}
+# $$
+#
+# ---
+#
+# ### Coincidence-Filtered Path Amplitudes 
+#
+# When tracking two photons interacting across the network, we only accept outcomes where **exactly one photon exits the Control path and one photon exits the Target path** (Post-Selection). 
+#
+# ### Case 1: $|HH\rangle$ (Both Transmit)
+# * $PPBS_B$ elements leave $H$ unattenuated ($1 \times 1 = 1$).
+# * At $PPBS_A$, both photons transmit: $\sqrt{2/3} \times \sqrt{2/3} = 2/3$.
+# $$\psi_{\text{out}} = \frac{2}{3}|HH\rangle$$
+#
+# ### Case 2: $|HV\rangle$ (H Transmits, V Reflects)
+# * $PPBS_{B1}$ leaves $H_C$ at $1$. $PPBS_{B2}$ scales $V_T$ by $\sqrt{1/3}$.
+# * At $PPBS_A$, $H_C$ transmits ($\sqrt{2/3}$) and $V_T$ reflects ($1$).
+# $$\psi_{\text{out}} = (1) \times \left(\sqrt{\frac{2}{3}} \cdot 1\right) \times \left(\sqrt{\frac{1}{3}}\right)|HV\rangle = \sqrt{\frac{2}{9}}|HV\rangle = \frac{\sqrt{2}}{3}|HV\rangle$$
+#
+# ### Case 3: $|VH\rangle$ (V Reflects, H Transmits)
+# * $PPBS_{B1}$ scales $V_C$ by $\sqrt{1/3}$. $PPBS_{B2}$ leaves $H_T$ at $1$.
+# * At $PPBS_A$, $V_C$ reflects into the target output ($1$) and $H_T$ reflects into the control output with a unitary phase shift ($-\sqrt{1/3}$).
+# $$\psi_{\text{out}} = \left(\sqrt{\frac{1}{3}}\right) \times \left(-\sqrt{\frac{1}{3}} \cdot 1\right) \times (1)|VH\rangle = -\frac{1}{3}|VH\rangle$$
+#
+# ### Case 4: $|VV\rangle$ (Both Reflect)
+# * Both $PPBS_B$ elements scale the $V$ amplitudes: $\sqrt{1/3} \times \sqrt{1/3} = 1/3$.
+# * At $PPBS_A$, both photons reflect perfectly ($1 \times 1 = 1$), swapping paths.
+# $$\psi_{\text{out}} = \left(\sqrt{\frac{1}{3}}\right) \times (1 \times 1) \times \left(\sqrt{\frac{1}{3}}\right)|VV\rangle = \frac{1}{3}|VV\rangle$$
+#
+# ---
+#
+# ### The Uncompiled Matrix
+#
+# When we assemble these raw output amplitudes into a matrix, we get:
+# $$
+# M_{\text{raw}} = \begin{pmatrix} 
+# \frac{2}{3} & 0 & 0 & 0 \\ 
+# 0 & \frac{\sqrt{2}}{3} & 0 & 0 \\ 
+# 0 & 0 & -\frac{1}{3} & 0 \\ 
+# 0 & 0 & 0 & \frac{1}{3} 
+# \end{pmatrix}
+# $$
+#
+# Because this matrix still lacks uniform diagonal amplitudes, the actual experiment by Okamoto et al. swaps the supplemental filters for simple **quarter-wave and half-wave plate combinations** ($QWP-HWP-QWP$). This forces a clean, uniform coincidence amplitude of exactly $1/3$ across all paths:
+#
+# $$
+# M_{\text{coincidence}} = \frac{1}{3}\begin{pmatrix} 
+# 1 & 0 & 0 & 0 \\ 
+# 0 & 1 & 0 & 0 \\ 
+# 0 & 0 & -1 & 0 \\ 
+# 0 & 0 & 0 & 1 
+# \end{pmatrix}
+# $$
+#
+# This is a **Controlled-Phase (CZ) gate** with a success efficiency of $(1/3)^2 = 1/9$. 
+#
+# By framing the Target path with two **Hadamard rotations ($H$)** using $22.5^\circ$ HWPs, the negative phase shift on the $|10\rangle$ state transforms directly into the target-flipping **CNOT** permutation:
+# $$\text{CNOT} = (I \otimes H) \cdot M_{\text{coincidence}} \cdot (I \otimes H)$$
+#
+# ## Ideal CNOT
+#
+# $$
+# \text{CNOT} = \begin{pmatrix} 
+# 1 & 0 & 0 & 0 \\ 
+# 0 & 1 & 0 & 0 \\ 
+# 0 & 0 & 0 & 1 \\ 
+# 0 & 0 & 1 & 0 
+# \end{pmatrix}
+# $$
+#
 
 # %%

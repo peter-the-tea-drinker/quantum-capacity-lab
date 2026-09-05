@@ -24,6 +24,12 @@ os.makedirs('data', exist_ok=True)
 # %% [markdown]
 # ## Section 1: Spontaneous Parametric Downconversion
 #
+
+# %%
+show_img('images/Spontaneous_Parametric_Downconversion.png','By <a href="https://en.wikipedia.org/wiki/User:J_S_Lundeen" class="extiw" title="wikipedia:User:J S Lundeen">J S Lundeen</a> at <a href="https://en.wikipedia.org/wiki/" class="extiw" title="wikipedia:">English Wikipedia</a> - <span class="int-own-work" lang="">Own work by the original uploader</span>, <a href="http://creativecommons.org/licenses/by-sa/3.0/" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=36352608">Link</a>')
+
+# %% [markdown]
+#
 # Nonlinear crystals (such as bbo) can create pairs of photons that share a wave function - they are entangled.
 #
 # A UV laser will sometimes interact with the crystal, become absorbed, and two entangled low energy photons emerge (conserving momentum).
@@ -59,7 +65,6 @@ os.makedirs('data', exist_ok=True)
 #
 
 # %%
-show_img('images/Spontaneous_Parametric_Downconversion.png','By <a href="https://en.wikipedia.org/wiki/User:J_S_Lundeen" class="extiw" title="wikipedia:User:J S Lundeen">J S Lundeen</a> at <a href="https://en.wikipedia.org/wiki/" class="extiw" title="wikipedia:">English Wikipedia</a> - <span class="int-own-work" lang="">Own work by the original uploader</span>, <a href="http://creativecommons.org/licenses/by-sa/3.0/" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=36352608">Link</a>')
 
 # %% [markdown] slideshow={"slide_type": "slide"}
 # ## Section 1: Multi-Qubit Hilbert Spaces & Tensor Products
@@ -89,6 +94,12 @@ print(ket_00)
 # #### **Step A: The "Which-Way" Marked State (Bell State)**
 # The waveplate marks Path A as Vertical ($\vert V \rangle$) and leaves Path B as Horizontal ($\vert H \rangle$):
 # $$\vert\psi\rangle = \frac{1}{\sqrt{2}} \big( \vert A\rangle\vert V\rangle + \vert B\rangle\vert H\rangle \big) = \frac{1}{\sqrt{2}} \left[ \begin{pmatrix} 0 \\ 1 \\ 0 \\ 0 \end{pmatrix} + \begin{pmatrix} 0 \\ 0 \\ 1 \\ 0 \end{pmatrix} \right] = \frac{1}{\sqrt{2}} \begin{pmatrix} 0 \\ 1 \\ 1 \\ 0 \end{pmatrix}$$
+#
+# The Bell State is an important first step in most experiments - both particles are "equal and opposite" as much as possible, but as entangled as possible.
+#
+#
+#
+#
 #
 # #### **Step B: The Eraser Operator (Diagonal Polarizer)**
 

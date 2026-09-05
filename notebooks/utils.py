@@ -9,3 +9,4 @@ def show_img(path, html_caption):
     </figure>
     """
     display(HTML(html_str))
+
