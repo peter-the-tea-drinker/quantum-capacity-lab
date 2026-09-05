@@ -21,6 +21,144 @@ from qiskit.visualization import plot_histogram
 plt.style.use('dark_background')
 os.makedirs('data', exist_ok=True)
 
+# %% [markdown]
+#
+#
+# #### **Step B: The Eraser Operator (Diagonal Polarizer)**
+#
+# The diagonal eraser state is $\vert D \rangle = \frac{1}{\sqrt{2}}(\vert H \rangle + \vert V \rangle) = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 \\ 1 \end{pmatrix}$. 
+#
+# To project the polarization qubit while leaving the path qubit untouched, we construct the measurement matrix $M = I \otimes \langle D \vert$:
+# $$M = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} \otimes \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 1 \end{pmatrix} = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 \cdot \begin{pmatrix} 1 & 1 \end{pmatrix} & 0 \cdot \begin{pmatrix} 1 & 1 \end{pmatrix} \\ 0 \cdot \begin{pmatrix} 1 & 1 \end{pmatrix} & 1 \cdot \begin{pmatrix} 1 & 1 \end{pmatrix} \end{pmatrix} = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 1 & 0 & 0 \\ 0 & 0 & 1 & 1 \end{pmatrix}$$
+#
+# #### **Step C: The Resulting State Post-Erasure**
+# We apply the projection matrix $M$ to our marked state $\vert\psi\rangle$:
+# $$\vert\psi_{\text{final}}\rangle = M \vert\psi\rangle$$
+#
+# $$\vert\psi_{\text{final}}\rangle = \left[ \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 1 & 0 & 0 \\ 0 & 0 & 1 & 1 \end{pmatrix} \right] \cdot \left[ \frac{1}{\sqrt{2}} \begin{pmatrix} 0 \\ 1 \\ 1 \\ 0 \end{pmatrix} \right]$$
+#
+# $$\vert\psi_{\text{final}}\rangle = \frac{1}{2} \begin{pmatrix} (1\cdot0) + (1\cdot1) + (0\cdot1) + (0\cdot0) \\ (0\cdot0) + (0\cdot1) + (1\cdot1) + (1\cdot0) \end{pmatrix} = \frac{1}{2} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = \frac{1}{2} (\vert A \rangle + \vert B \rangle)$$
+#
+# ## Mathematical Framework with a Diagonal Eraser
+#
+# To destroy the "which-way" information and recover the interference fringes, we place a diagonal polarizer in front of the detector screen. 
+#
+# A diagonal polarizer filters the incoming photons by projecting their polarization states onto the Diagonal state basis vector $|D\rangle$:
+# $$|D\rangle = \frac{1}{\sqrt{2}}\big(|V\rangle + |H\rangle\big)$$
+#
+# ### 1. Projecting the Quantum State
+# Recall the entangled spatial-polarization state arriving at position $x$ on the screen before the polarizer:
+# $$|\psi(x)\rangle = \frac{1}{\sqrt{2}} \big(\psi_1(x)|V\rangle + \psi_2(x)|H\rangle\big)$$
+#
+# When the photon passes through the diagonal polarizer, the state is projected onto $\langle D|$. The new post-selection state vector $|\psi_D(x)\rangle$ becomes:
+# $$|\psi_D(x)\rangle = |D\rangle\langle D|\psi(x)\rangle$$
+#
+# We compute the scalar probability amplitude coefficient $\langle D|\psi(x)\rangle$:
+# $$\langle D|\psi(x)\rangle = \frac{1}{\sqrt{2}}\big(\langle V| + \langle H|\big) \cdot \frac{1}{\sqrt{2}}\big(\psi_1(x)|V\rangle + \psi_2(x)|H\rangle\big)$$
+#
+# Multiplying this out using the orthogonality rules ($\langle V|V\rangle = \langle H|H\rangle = 1$ and $\langle V|H\rangle = \langle H|V\rangle = 0$):
+# $$\langle D|\psi(x)\rangle = \frac{1}{2}\big(\psi_1(x) + \psi_2(x)\big)$$
+#
+# ### 2. Computing the Recovered Intensity Profile
+# The observed light intensity $I_D(x)$ behind the diagonal eraser is found by calculating the absolute square of this filtered amplitude:
+# $$I_D(x) = \left|\langle D|\psi(x)\rangle\right|^2 = \frac{1}{4}\big(\psi_1(x) + \psi_2(x)\big)^*\big(\psi_1(x) + \psi_2(x)\big)$$
+#
+# Expanding this expression gives:
+# $$I_D(x) = \frac{1}{4}|\psi_1(x)|^2 + \frac{1}{4}|\psi_2(x)|^2 + \frac{1}{4}\big(\psi_1^*(x)\psi_2(x) + \psi_2^*(x)\psi_1(x)\big)$$
+#
+# ### 3. Re-emergence of the Interference Fringes
+# Unlike the previous step where the cross-terms vanished, the eraser has mixed the states together. By expressing the spatial wavefunctions in terms of their magnitudes and phase difference $\phi(x)$ (where $\psi_1^*(x)\psi_2(x) = |\psi_1(x)||\psi_2(x)|e^{i\phi(x)}$), the terms inside the parentheses collapse into a real cosine wave via Euler's identity:
+#
+# $$\psi_1^*(x)\psi_2(x) + \psi_2^*(x)\psi_1(x) = 2|\psi_1(x)||\psi_2(x)|\cos\phi(x)$$
+#
+# Assuming symmetric slits for simplicity ($|\psi_1(x)| = |\psi_2(x)| = |\psi_0(x)|$), the equation fully simplifies to:
+# $$I_D(x) = \frac{1}{2}|\psi_0(x)|^2\big(1 + \cos\phi(x)\big)$$
+#
+# **Conclusion:** By erasing the distinct polarization tags and projecting them into a shared state, the path information is completely lost to the universe. As a direct result, the phase-dependent cross-term returns to the equation, and highly visible constructive and destructive **interference fringes re-emerge** on the detector screen.
+#
+# * **Without the Eraser:** The quantum state is perfectly entangled ($|\psi\rangle = \frac{1}{\sqrt{2}} [|1,V\rangle + |2,H\rangle]$). Because the polarization states are orthogonal ($\langle V|H\rangle = 0$), the mathematical cross-terms completely vanish. The universe retains "which-way" path information, destroying all interference.
+# * **With the Eraser:** Passing the photons through a diagonal polarizer filters the light into a single, shared state ($|D\rangle$). This projection removes the distinguishing tags, rendering the paths identical again. The cross-terms re-emerge as a phase-dependent cosine wave, restoring the physical interference fringes.
+#
+
+# %% [markdown]
+# ## Student Exercise: The Anti-Diagonal Polarizer
+#
+# Now that you have seen how a **Diagonal Polarizer** $|D\rangle$ erases which-way information to restore interference fringes, your task is to analyze what happens when we use an **Anti-Diagonal Polarizer** $|A\rangle$ instead.
+#
+# The Anti-Diagonal state vector is defined as:
+# $$|A\rangle = \frac{1}{\sqrt{2}}\big(|V\rangle - |H\rangle\big)$$
+#
+# ### Your Tasks:
+# 1. **Mathematical Derivation:** Following the exact same steps used for the diagonal polarizer, project the arriving state $|\psi(x)\rangle = \frac{1}{\sqrt{2}} \big(\psi_1(x)|V\rangle + \psi_2(x)|H\rangle\big)$ onto $\langle A|$. Compute the resulting filtered intensity profile $I_A(x) = \left|\langle A|\psi(x)\rangle\right|^2$.
+# 2. **Phase Comparison:** How does your derived equation for $I_A(x)$ differ from the diagonal intensity profile $I_D(x)$? Pay close attention to the mathematical sign in front of the cosine/interference term.
+# 3. **The Big Picture:** If you physically added the two independent intensity patterns together ($I_D(x) + I_A(x)$), what resulting pattern would you get? Why does this make physical sense considering conservation of energy and the "No Eraser" pattern?
+#
+# ---
+#
+# ### Hint for your derivation:
+# * Recall that $\langle A|V\rangle = \frac{1}{\sqrt{2}}$ and $\langle A|H\rangle = -\frac{1}{\sqrt{2}}$.
+# * Use Euler's identity to simplify the resulting cross-terms: $\psi_1^*(x)\psi_2(x) + \psi_2^*(x)\psi_1(x) = 2|\psi_1(x)||\psi_2(x)|\cos\phi(x)$.
+#
+
+# %%
+import numpy as np
+import matplotlib.pyplot as plt
+
+# ---------------------------------------------------------
+# 1. Parameter Setup
+# ---------------------------------------------------------
+x = np.linspace(-10, 10, 1000)  # Screen position coordinate
+
+# Single-slit diffraction envelope (spatial wavefunction magnitudes)
+envelope = np.sinc(x / 4.0) ** 2
+
+# Cosine factor representing the phase difference between the paths
+interference_term = np.cos(2 * np.pi * x / 2.0)
+
+# ---------------------------------------------------------
+# 2. Calculating the Three Intensity Profiles
+# ---------------------------------------------------------
+# 1. No Eraser: Simple sum of intensities (Cross-terms are 0)
+no_erasure = envelope 
+
+# 2. Diagonal Eraser: Cross-term returns with a POSITIVE sign
+diagonal_erasure = envelope * (1 + interference_term) / 2.0
+
+# 3. Anti-Diagonal Eraser: Cross-term returns with a NEGATIVE sign (Anti-fringes)
+antidiagonal_erasure = envelope * (1 - interference_term) / 2.0
+
+# ---------------------------------------------------------
+# 3. Plotting the Results
+# ---------------------------------------------------------
+plt.figure(figsize=(11, 6.5))
+
+# Plot the base "No Eraser" envelope
+plt.plot(x, no_erasure, 
+         label=r'No Eraser: $I_{Total}(x) = \frac{1}{2}|\psi_1|^2 + \frac{1}{2}|\psi_2|^2$', 
+         color='yellow', linewidth=3.0, zorder=3)
+
+# Plot the Diagonal Eraser fringes
+plt.plot(x, diagonal_erasure, 
+         label=r'Diagonal Eraser ($|D\rangle$ Fringes): $\propto (1 + \cos\phi)$', 
+         color='dodgerblue', linestyle='--', linewidth=2.0)
+
+# Plot the Anti-Diagonal Eraser anti-fringes
+plt.plot(x, antidiagonal_erasure, 
+         label=r'Anti-Diagonal Eraser ($|A\rangle$ Anti-fringes): $\propto (1 - \cos\phi)$', 
+         color='darkorange', linestyle=':', linewidth=2.5)
+
+# Formatting the visualization
+plt.title('Quantum Eraser: Fringes, Anti-Fringes, and the Total Distribution', 
+          fontsize=14, fontweight='bold', pad=15)
+plt.xlabel('Screen Position ($x$)', fontsize=12)
+plt.ylabel('Normalized Intensity $I(x)$', fontsize=12)
+plt.legend(loc='upper right', fontsize=10.5, framealpha=0.95, shadow=True)
+plt.grid(True, linestyle=':', alpha=0.6)
+
+# Display the output directly in Jupyter
+plt.show()
+
+
 # %% [markdown] slideshow={"slide_type": "slide"}
 # ## Section 1: Ramsey Interference Baseline (System Only)
 #

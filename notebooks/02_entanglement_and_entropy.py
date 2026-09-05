@@ -90,9 +90,11 @@ print(ket_00)
 # ## Section 2: Bell State Entanglement ($|\Phi^+\rangle$)
 #
 #
+
+# %% [markdown] slideshow={"slide_type": "slide"}
 #
 # #### **Step A: The "Which-Way" Marked State (Bell State)**
-# The waveplate marks Path A as Vertical ($\vert V \rangle$) and leaves Path B as Horizontal ($\vert H \rangle$):
+# A waveplate rotates A so it marks Path A as Vertical ($\vert V \rangle$) and leaves Path B as Horizontal ($\vert H \rangle$):
 # $$\vert\psi\rangle = \frac{1}{\sqrt{2}} \big( \vert A\rangle\vert V\rangle + \vert B\rangle\vert H\rangle \big) = \frac{1}{\sqrt{2}} \left[ \begin{pmatrix} 0 \\ 1 \\ 0 \\ 0 \end{pmatrix} + \begin{pmatrix} 0 \\ 0 \\ 1 \\ 0 \end{pmatrix} \right] = \frac{1}{\sqrt{2}} \begin{pmatrix} 0 \\ 1 \\ 1 \\ 0 \end{pmatrix}$$
 #
 # The Bell State is an important first step in most experiments - both particles are "equal and opposite" as much as possible, but as entangled as possible.
@@ -101,37 +103,109 @@ print(ket_00)
 #
 #
 #
-# #### **Step B: The Eraser Operator (Diagonal Polarizer)**
-
-# %%
-show_img('images/erasure1.png','By <a href="//commons.wikimedia.org/wiki/User:Patrick_Edwin_Moran" title="User:Patrick Edwin Moran">Patrick Edwin Moran</a> - <span class="int-own-work" lang="en">Own work</span>, <a href="https://creativecommons.org/licenses/by-sa/3.0" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=31186313">Link</a>')
-
-# %%
-show_img('images/erasure2.png','By <a href="//commons.wikimedia.org/wiki/User:Patrick_Edwin_Moran" title="User:Patrick Edwin Moran">Patrick Edwin Moran</a> - <span class="int-own-work" lang="en">Own work</span>, <a href="https://creativecommons.org/licenses/by-sa/3.0" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=31186314">Link</a>')
-
-# %% [markdown] slideshow={"slide_type": "slide"}
-#
-# The diagonal eraser state is $\vert D \rangle = \frac{1}{\sqrt{2}}(\vert H \rangle + \vert V \rangle) = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 \\ 1 \end{pmatrix}$. 
-#
-# To project the polarization qubit while leaving the path qubit untouched, we construct the measurement matrix $M = I \otimes \langle D \vert$:
-# $$M = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} \otimes \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 1 \end{pmatrix} = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 \cdot \begin{pmatrix} 1 & 1 \end{pmatrix} & 0 \cdot \begin{pmatrix} 1 & 1 \end{pmatrix} \\ 0 \cdot \begin{pmatrix} 1 & 1 \end{pmatrix} & 1 \cdot \begin{pmatrix} 1 & 1 \end{pmatrix} \end{pmatrix} = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 1 & 0 & 0 \\ 0 & 0 & 1 & 1 \end{pmatrix}$$
-#
-# #### **Step C: The Resulting State Post-Erasure**
-# We apply the projection matrix $M$ to our marked state $\vert\psi\rangle$:
-# $$\vert\psi_{\text{final}}\rangle = M \vert\psi\rangle$$
-#
-# $$\vert\psi_{\text{final}}\rangle = \left[ \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 1 & 0 & 0 \\ 0 & 0 & 1 & 1 \end{pmatrix} \right] \cdot \left[ \frac{1}{\sqrt{2}} \begin{pmatrix} 0 \\ 1 \\ 1 \\ 0 \end{pmatrix} \right]$$
-#
-# $$\vert\psi_{\text{final}}\rangle = \frac{1}{2} \begin{pmatrix} (1\cdot0) + (1\cdot1) + (0\cdot1) + (0\cdot0) \\ (0\cdot0) + (0\cdot1) + (1\cdot1) + (1\cdot0) \end{pmatrix} = \frac{1}{2} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = \frac{1}{2} (\vert A \rangle + \vert B \rangle)$$
-#
-#
 # An entangled state cannot be factored into product states ($|\psi_{AB}\rangle \neq |\psi_A\rangle \otimes |\psi_B\rangle$).
 #
+#
+#
+
+# %% [markdown]
+# ## Mathematical Framework of the Marked Bell State
+#
+# Let the spatial states of a photon passing through the double slit system be defined by the orthogonal basis:
+# * $|1\rangle$: The photon traveling through **Slit 1**.
+# * $|2\rangle$: The photon traveling through **Slit 2**.
+#
+# When quarter-wave plates or polarization rotators are placed at the slits, they imprint "which-way" labels on the photon. Slit 1 marks the path with a Vertical polarization state $|V\rangle$, while Slit 2 marks the path with an orthogonal Horizontal polarization state $|H\rangle$. 
+#
+# This creates an entangled path-polarization state (a **Bell state**):
+#
+# $$|\psi\rangle = \frac{1}{\sqrt{2}} \big(|1\rangle|V\rangle + |2\rangle|H\rangle\big)$$
+#
+# ### 1. Propagation to the Screen
+# As the spatial components of the state evolve over a distance to a position $x$ on a distant detector screen, the path basis elements project onto standard spatial wavefunctions:
+# $$\langle x|1\rangle = \psi_1(x)$$
+# $$\langle x|2\rangle = \psi_2(x)$$
+#
+# Substituting these projections into our state vector gives the total quantum state at position $x$:
+# $$|\psi(x)\rangle = \frac{1}{\sqrt{2}} \big(\psi_1(x)|V\rangle + \psi_2(x)|H\rangle\big)$$
+#
+# ### 2. Computing the Intensity Profile (No Eraser)
+# To evaluate the observed physical light intensity $I(x)$ on the screen, we compute the quantum mechanical probability density by taking the inner product of the state with itself, $\langle\psi(x)|\psi(x)\rangle$:
+#
+# $$I(x) = \frac{1}{2} \Big( \psi_1^*(x)\langle V| + \psi_2^*(x)\langle H| \Big) \Big( \psi_1(x)|V\rangle + \psi_2(x)|H\rangle \Big)$$
+#
+# Expanding this product out yields four distinct terms:
+# $$I(x) = \frac{1}{2}|\psi_1(x)|^2 \langle V|V\rangle + \frac{1}{2}|\psi_2(x)|^2 \langle H|H\rangle + \frac{1}{2}\psi_1^*(x)\psi_2(x)\langle V|H\rangle + \frac{1}{2}\psi_2^*(x)\psi_1(x)\langle H|V\rangle$$
+#
+# ### 3. The Vanishing Cross-Terms
+# Because Vertical and Horizontal polarization states are perfectly orthogonal to one another, their mathematical overlaps evaluate exactly to zero:
+# $$\langle V|H\rangle = \langle H|V\rangle = 0$$
+# $$\langle V|V\rangle = \langle H|H\rangle = 1$$
+#
+# Substituting these values back into the expanded equation directly eliminates the phase-dependent interference terms:
+#
+# $$I(x) = \frac{1}{2}|\psi_1(x)|^2 + \frac{1}{2}|\psi_2(x)|^2$$
+#
+# **Conclusion:** Because the cross-terms are completely canceled out by the orthogonal path markers, no constructive or destructive interference fringes can form. The screen registers a purely classical, smooth sum of individual slit intensities.
+#
+
+# %%
+import numpy as np
+import matplotlib.pyplot as plt
+
+# ---------------------------------------------------------
+# 1. Parameter Setup
+# ---------------------------------------------------------
+x = np.linspace(-10, 10, 1000)  # Screen position coordinate
+
+# Single-slit diffraction envelope (sinc function modeling slit width)
+# This represents the spatial wavefunctions \psi_1(x) and \psi_2(x)
+envelope = np.sinc(x / 4.0) ** 2
+
+# Interference term (cosine function modeling slit separation)
+# This arises from the cross-terms \psi_1*(x)\psi_2(x) when tags are erased
+interference_factor = 1 + np.cos(2 * np.pi * x / 2.0)
+
+# ---------------------------------------------------------
+# 2. Calculating Intensities
+# ---------------------------------------------------------
+# Marked State / No Eraser: I(x) = 0.5*|\psi_1|^2 + 0.5*|\psi_2|^2
+# Cross-terms vanish completely due to orthogonal polarization states
+no_interference = envelope 
+
+# Erased State / Diagonal Polarizer: Fringes are restored
+erased_interference = envelope * (interference_factor / 2.0)
+
+# ---------------------------------------------------------
+# 3. Plotting the Results
+# ---------------------------------------------------------
+plt.figure(figsize=(10, 6))
+
+# Plot the smooth pattern observed without the erasure
+plt.plot(x, no_interference, 
+         label=r'No Eraser: $I(x) = \frac{1}{2}|\psi_1|^2 + \frac{1}{2}|\psi_2|^2$', 
+         color='crimson', linewidth=2.5)
+
+# Plot the fringe pattern observed when the diagonal eraser is applied
+plt.plot(x, erased_interference, 
+         label=r'With Diagonal Eraser: Which-Way Info Destroyed', 
+         color='dodgerblue', linestyle='--', alpha=0.8, linewidth=2.0)
+
+# Formatting the plot
+plt.title('Double-Slit Quantum Eraser Profile', fontsize=14, fontweight='bold', pad=15)
+plt.xlabel('Screen Position ($x$)', fontsize=12)
+plt.ylabel('Normalized Intensity $I(x)$', fontsize=12)
+plt.legend(loc='upper right', fontsize=11, framealpha=0.9)
+plt.grid(True, linestyle=':', alpha=0.6)
+
+# Display the output directly in Jupyter
+plt.show()
+
+
+# %% [markdown]
 # Applying a Hadamard gate followed by a CNOT gate yields the maximally entangled Bell state:
 #
 # $$|\Phi^+\rangle = \frac{1}{\sqrt{2}}(|00\rangle + |11\rangle)$$
-
-# %%
 
 # %% slideshow={"slide_type": "fragment"}
 # Build Bell State Circuit in Qiskit
@@ -228,5 +302,12 @@ plt.show()
 # 2. **Visibility Bound:** Given that Ramsey fringe visibility is $V = |\langle -\alpha | \alpha \rangle|$, prove that:
 #    $$V = e^{-2|\alpha|^2}$$
 # 3. **Capacity Threshold:** How many average photons $\bar{n} = |\alpha|^2$ are required to suppress system coherence below $1\%$? What does this scaling limit imply about macro-system state capacity ($\mathcal{C}_{\text{max}}$)?
+
+# %%
+### A different version:
+
+# %%
+show_img('images/erasure1.png','By <a href="//commons.wikimedia.org/wiki/User:Patrick_Edwin_Moran" title="User:Patrick Edwin Moran">Patrick Edwin Moran</a> - <span class="int-own-work" lang="en">Own work</span>, <a href="https://creativecommons.org/licenses/by-sa/3.0" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=31186313">Link</a>')
+show_img('images/erasure2.png','By <a href="//commons.wikimedia.org/wiki/User:Patrick_Edwin_Moran" title="User:Patrick Edwin Moran">Patrick Edwin Moran</a> - <span class="int-own-work" lang="en">Own work</span>, <a href="https://creativecommons.org/licenses/by-sa/3.0" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=31186314">Link</a>')
 
 # %%
